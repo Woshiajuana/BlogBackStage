@@ -1,20 +1,21 @@
 <template>
   <div class="header-wrap">
-      <h1 class="header-logo">后台管理系统</h1>
+      <h1 class="header-logo">
+          <img class="header-logo-img" src="../assets/img/owulia-text.png" alt="">
+      </h1>
       <div class="user-info">
           <el-dropdown>
               <span class="el-dropdown-link user-name">
-              <img class="user-img" src="../assets/images/header-img.jpg" alt="">
+              <img class="user-img" src="../assets/img/header-img.jpg" alt="">
                 {{ user_name }}<i class="el-icon-caret-bottom el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item><a @click="safeExit">安全退出</a></el-dropdown-item>
+                  <el-dropdown-item><a @click="safeExit"><i class="el-icon-upload2 exit-icon"></i> 安全退出</a></el-dropdown-item>
               </el-dropdown-menu>
           </el-dropdown>
       </div>
   </div>
 </template>
-
 <script>
     import Tool from '../assets/lib/Tool';
     export default {
@@ -22,7 +23,7 @@
         data () {
             return {
                 user_name: ''
-            };
+            }
         },
         created () {
             this.achieveUser();
@@ -37,26 +38,31 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    Util.dataToSessionStorageOperate.clear();
+                    Tool.dataToSessionStorageOperate.clear();
                     this.$router.push("/login");
                 });
             }
         }
     }
 </script>
-
 <style lang="scss">
     @import "../assets/scss/define";
+    .exit-icon{
+        transform: rotate(90deg);
+    }
     .header-wrap{
         height: 60px;
         background-color: #1F2D3D;
     }
     .header-logo{
         @extend %fl;
-        @extend %f22;
-        @extend %cfff;
-        line-height: 60px;
-        margin-left: 20px;
+        width: 80px;
+        height: 50px;
+        margin: 5px 0 0 30px;
+    }
+    .header-logo-img{
+        @extend %db;
+        @extend %h100;
     }
     .user-info{
         @extend %pa;
