@@ -128,6 +128,7 @@
     }
     .input-btn{
         @extend %pf;
+        z-index: 1;
         right: 20px;
         top: 80px;
     }
@@ -141,17 +142,5 @@
     }
     .quill-editor-example{
         margin-top: 20px;
-    }
-    .ql-container .ql-editor {
-        min-height: 20em;
-        padding-bottom: 1em;
-        max-height: 25em;
-    }
-    .html {
-        height: 9em;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        border-top: none;
-        resize: vertical;
     }
 </style>

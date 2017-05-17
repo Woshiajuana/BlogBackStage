@@ -1,7 +1,10 @@
 <template>
     <!--登录页-->
     <div class="views-wrap login-view">
-        <div class="login-content">
+        <div class="login-content"
+             v-loading="is_timer"
+             element-loading-text="登录中~~~"
+        >
             <h1 class="login-title">后台管理系统</h1>
             <div class="input-wrap">
                 <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
@@ -21,7 +24,7 @@
   <!--/登录页-->
 </template>
 <script>
-    import Util from '../../assets/lib/util';
+    import Util from '../../assets/lib/Util';
     export default {
         name: 'login',
         data() {
@@ -36,6 +39,7 @@
                 callback();
             };
             return {
+                is_timer: false,
                 loginForm: {
                     user_name: '',
                     user_password: ''
@@ -54,18 +58,23 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        Util.loginAjax.login(this.loginForm,(result) => {
-                            if (result.status){
-                                Util.dataToSessionStorageOperate.save('token',result.token);
-                                Util.dataToSessionStorageOperate.save('user',this.loginForm);
-                                this.$router.push("/?tab=all");
-                            } else {
-                                this.$message({
-                                    showClose: true,
-                                    message: result.msg + '，帐号或密码错误!',
-                                    type: 'error'
-                                });
-                            }
+                        if ( this.is_timer ) return;
+                        this.is_timer = true;
+                        Util.login(this.loginForm,(result) => {
+                            setTimeout( () => {
+                                if (result.status){
+                                    Util.dataToSessionStorageOperate.save('token',result.token);
+                                    Util.dataToSessionStorageOperate.save('user',this.loginForm);
+                                    this.$router.push("/?tab=all");
+                                } else {
+                                    this.$message({
+                                        showClose: true,
+                                        message: result.msg,
+                                        type: 'error'
+                                    });
+                                }
+                                this.is_timer = false;
+                            },1000)
                         });
                         return true;
                     } else {
@@ -84,8 +93,8 @@
         background-color: #1F2D3D;
     }
     .login-content{
-        @extend %pa;
         @extend %t50;
+        position: absolute !important;
         right: 15%;
         width: 300px;
         height: 380px;

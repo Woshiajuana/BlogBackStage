@@ -1,125 +1,122 @@
 /**
- * Created by Administrator on 2017/4/18.
+ * Created by Administrator on 2017/5/2.
  */
-/**实用工具*/
-import axios from 'axios';
-const util = function ( win ) {
+import axios from 'axios'
+import Tool from './Tool'
+import router from '../../router/index'
+const Util = function (win) {
+
     /**
      * 定义一系列变量
      * */
-    var util = {},
-        base_url = '//www.owulia.com/ajuan_backstage';
+    var Util = {},
+        base_url = '//www.owulia.com/ink';
 
     /**
      * 根据是线上环境还是本地环境，选取不同的server_url的值
      * */
-    if(win.location.href.indexOf('localhost') > -1){
+    if (win.location.href.indexOf('localhost') > -1){
         base_url = 'http://localhost:8088';
     }
 
-    /**格式化时间*/
-    util.dateFormat = function(fmt) {
-        var time = new Date();
-        var o = {
-            "M+" : time.getMonth()+1,                 //月份
-            "d+" : time.getDate(),                    //日
-            "h+" : time.getHours(),                   //小时
-            "m+" : time.getMinutes(),                 //分
-            "s+" : time.getSeconds(),                 //秒
-            "q+" : Math.floor((time.getMonth()+3)/3), //季度
-            "S"  : time.getMilliseconds()             //毫秒
-        };
-        if(/(y+)/.test(fmt)) {
-            fmt=fmt.replace(RegExp.$1, (time.getFullYear()+"").substr(4 - RegExp.$1.length));
-        }
-        for(var k in o) {
-            if(new RegExp("("+ k +")").test(fmt)){
-                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-            }
-        }
-        return fmt;
+    /**用户登录*/
+    Util.login = function (user,success_callback, fail_callback) {
+        Util.ajax( '/blog_backstage/login', user, 'POST', success_callback, fail_callback );
     };
 
-    /**临时数据存储到sessionStorage中*/
-    util.dataToSessionStorageOperate = {
-        /**存储*/
-        save ( data_name, data_value ) {
-            if( data_name && data_value )
-                sessionStorage.setItem( data_name, JSON.stringify(data_value) );
-        },
-        /**取出*/
-        achieve ( data_name ) {
-            if( !data_name ) return;
-            var data_value = sessionStorage.getItem( data_name );
-            data_value && ( data_value = JSON.parse( data_value ) );
-            return data_value;
-        },
-        /**删除*/
-        remove ( data_name ) {
-            if( data_name )
-                sessionStorage.removeItem( data_name );
-        },
-        /**清空*/
-        clear () {
-            sessionStorage.clear();
-        }
+    /**验证注册时信息是否已存在*/
+    Util.checkUserRepeat = function (user_msg,success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/checkUserRepeat', {user_msg}, 'GET', success_callback, fail_callback );
     };
 
-    /**登录页面*/
-    util.loginAjax = {
-        /**登录*/
-        login ( user , success_callback) {
-            util.ajax('/ajuan_backstage/login',user,'post',success_callback);
-        }
+    /**发送邮件*/
+    Util.sendEmail = function (user_email,success_callback,fail_callback) {
+        Util.ajax( '/thepalestink/sendEmail', {user_email:user_email}, 'GET', success_callback, fail_callback );
     };
 
-    /**列表页面请求文章数据的方法*/
-    util.listAjax = {
-        /**请求文章数据*/
-        achieveArticle (data,success_callback, fail_callback) {
-            util.ajax('/ajuan_backstage/fetchArticle',data,'get',success_callback,fail_callback);
-        },
-        /**创建文章*/
-        insertArticle (data, success_callback, fail_callback) {
-            util.ajax('/ajuan_backstage/insertArticle',data,'get',success_callback, fail_callback)
-        },
-        /**删除文章*/
-        removeArticle (data, success_callback, fail_callback) {
-            util.ajax('/ajuan_backstage/removeArticle',data,'get',success_callback, fail_callback)
-        }
+    /**用户注册*/
+    Util.register = function (new_user,success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/register', new_user, 'POST', success_callback, fail_callback );
     };
 
+    /**
+     * 请求总共可用余额
+     * */
+    Util.fetchTotalBalance = function (user_name,success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/fetchTotalBalance', {user_name: user_name}, 'GET', success_callback, fail_callback );
+    };
 
-    /**跳转页面*/
-    util.jumpPage = function ( jumpUrl ) {
-        if(typeof jumpUrl == 'undefined') win.location.href = win.location.origin + '/#/abnormal';
-        else if( jumpUrl.indexOf('http') == -1)
-            win.location.href = win.location.origin + '/#/' + jumpUrl;
-        else
-            win.location.href = jumpUrl;
+    /**
+     * 添加账单
+     * */
+    Util.addBill = function (bill, success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/addBill', bill, 'GET', success_callback, fail_callback );
+    };
+
+    /**
+     * 请求账单
+     * */
+    Util.fetchBill = function (obj, success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/fetchBill',obj,'GET', success_callback,fail_callback);
+    };
+
+    /**
+     * 删除账单
+     * */
+    Util.removeBill = function (user_name, bill, success_callback, fail_callback) {
+        Util.ajax( '/thepalestink/removeBill',{user_name:user_name,bill: bill},'GET', success_callback,fail_callback);
+    };
+
+    /**修改密码*/
+    Util.modifyPassword = function (obj,success_callback,fail_callback) {
+        Util.ajax( '/thepalestink/modifyPassword',obj,'GET', success_callback,fail_callback);
+    };
+
+    /**找回密码*/
+    Util.retrievePassword = function (obj,success_callback,fail_callback) {
+        Util.ajax( '/thepalestink/retrievePassword',obj,'GET', success_callback,fail_callback);
     };
 
     /**
      * 公用请求ajax的方式
      * */
-    util.ajax = function (path, data, http_method, success_callback, fail_callback) {
+    Util.ajax = function (path, data, http_method, success_callback, fail_callback) {
         axios({
             url: path,
             method: http_method,
             baseURL: base_url,
             params: data
         }).then( function (response) {
-            /**token验证失败*/
-            if(response.data.status == -1){
-                util.jumpPage('login');
-            }else {
-                success_callback && success_callback(response.data);
+            var data = response.data;
+            /**没有登录跳转登录页面*/
+            if (data.status === -1) {
+                Tool.dataToSessionStorageOperate.remove('user');
+                Tool.dataToSessionStorageOperate.remove('token');
+                router.push('/login');
+            } else if (data.status === 2) {
+                router.push('/error');
+            } else {
+                success_callback && success_callback(data);
             }
         }).catch( function (error) {
             fail_callback && fail_callback( error );
         });
     };
 
-    return util;
-} ( window );
-export default util;
+    /**
+     * 总共可用余额
+     * */
+    Util.TotalBalance = {
+        /**查询*/
+        query () {
+            return +Tool.dataToLocalStorageOperate.achieve('total_balance') || 0;
+        },
+        /**存储可用余额*/
+        save ( total_balance ) {
+            Tool.dataToLocalStorageOperate.save('total_balance',total_balance);
+        }
+    };
+
+    return Util;
+} (window);
+export default Util;
