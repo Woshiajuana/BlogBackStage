@@ -1,15 +1,9 @@
 @import "./define";
-html{
-    overflow-y: scroll;
+#app,html,body{
+    @extend %oh;
+    @extend %h100;
 }
-html,body{
-    @extend %w100;
-    background-color: #f5f5f5;
-}
-#app{
-    @extend %pr;
-}
-.view-wrap{
+.views-wrap{
     @extend %w100;
     @extend %h100;
 }

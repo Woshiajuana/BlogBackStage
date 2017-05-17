@@ -18,27 +18,20 @@
             </el-input>
             <div class="quill-editor-example">
                 <p class="prompt-text"><span class="prompt-icon">*</span>正文：</p>
-                <!--<quill-editor-->
-                    <!--ref="myTextEditor"-->
-                    <!--v-model="content"-->
-                    <!--:options="editorOption"-->
-                    <!--@blur="onEditorBlur($event)"-->
-                    <!--@focus="onEditorFocus($event)"-->
-                    <!--@ready="onEditorReady($event)">-->
-                <!--</quill-editor>-->
-                <div class="html ql-editor" v-html="content"></div>
+                <textarea id="textarea"></textarea>
             </div>
             <div class="input-btn">
+                <el-button type="default" @click="submitArticle()">保存草稿</el-button>
                 <el-button type="primary" @click="submitArticle()">发布文章</el-button>
-                <el-button type="primary" @click="submitArticle()">保存草稿</el-button>
             </div>
         </div>
     </div>
     <!--/发表文章-->
 </template>
 <script>
-    import types from '../../store/mutation-types';
-    import Util from '../../assets/lib/util';
+    import types from '../../store/mutation-types'
+    import Util from '../../assets/lib/util'
+    import SimpleMDE from 'simplemde'
     export default {
         data() {
             return {
@@ -70,13 +63,6 @@
             }
         },
         methods: {
-            onEditorBlur(editor) {
-            },
-            onEditorFocus(editor) {
-            },
-            onEditorReady(editor) {
-            },
-            /***/
             submitArticle () {
                 if(!this.article_type || !this.article_title || !this.content) {
                     this.$message({
@@ -117,19 +103,24 @@
 
             }
         },
-        computed: {
-            editor() {
-                return this.$refs.myTextEditor.quillEditor
-            }
-        },
         created () {
+            this.$nextTick( () => {
+                var simplemde = new SimpleMDE({
+                    element: document.getElementById("textarea")
+                });
+            });
             this.$store.commit(types.SET_TAB_INDEX,'2');
-        },
-        mounted () {}
+        }
     }
 </script>
 <style lang="scss">
     @import "../../assets/scss/define";
+    #MyID{
+        @extend %db;
+    }
+    .container-wrap{
+        font-size: 14px;
+    }
     .el-input-group__prepend{
         width: 150px !important;
     }

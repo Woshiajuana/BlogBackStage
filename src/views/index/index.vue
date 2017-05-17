@@ -1,6 +1,6 @@
 <template>
     <!--首页-->
-    <div class="view-wrap">
+    <div class="views-wrap">
         <my-header></my-header>
         <my-menu></my-menu>
         <router-view></router-view>

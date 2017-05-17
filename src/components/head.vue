@@ -29,7 +29,7 @@
         },
         methods: {
             achieveUser () {
-                this.user_name = Util.dataToSessionStorageOperate.achieve('user').user_name;
+//                this.user_name = Util.dataToSessionStorageOperate.achieve('user').user_name;
             },
             safeExit () {
                 this.$confirm('是否删除安全退出?', '提示', {
