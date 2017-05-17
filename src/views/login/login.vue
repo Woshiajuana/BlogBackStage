@@ -24,6 +24,7 @@
   <!--/登录页-->
 </template>
 <script>
+    import Tool from '../../assets/lib/Tool';
     import Util from '../../assets/lib/Util';
     export default {
         name: 'login',
@@ -63,8 +64,9 @@
                         Util.login(this.loginForm,(result) => {
                             setTimeout( () => {
                                 if (result.status){
-                                    Util.dataToSessionStorageOperate.save('token',result.token);
-                                    Util.dataToSessionStorageOperate.save('user',this.loginForm);
+                                    var data = result.data;
+                                    Tool.dataToSessionStorageOperate.save('token', data.token);
+                                    Tool.dataToSessionStorageOperate.save('user', data.user);
                                     this.$router.push("/?tab=all");
                                 } else {
                                     this.$message({

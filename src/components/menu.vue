@@ -53,8 +53,8 @@
         }
         .el-menu-item-group{
             .el-menu-item{
-                height: 30px;
-                line-height: 30px;
+                height: 40px;
+                line-height: 40px;
             }
         }
     }
