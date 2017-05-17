@@ -1,7 +1,7 @@
 <template>
     <!--发表文章-->
     <div class="container-wrap">
-        <div class="container-content"
+        <div class="container-content editor-wrap"
              v-loading="is_loading"
              element-loading-text="拼命上传中~~~">
             <p class="prompt-text"><span class="prompt-icon">*</span>文章类型和文章标题：</p>
@@ -105,9 +105,11 @@
         },
         created () {
             this.$nextTick( () => {
-                var simplemde = new SimpleMDE({
-                    element: document.getElementById("textarea")
-                });
+                setTimeout( () => {
+                    var simplemde = new SimpleMDE({
+                        element: document.getElementById("textarea")
+                    });
+                },500)
             });
             this.$store.commit(types.SET_TAB_INDEX,'2');
         }
@@ -115,8 +117,8 @@
 </script>
 <style lang="scss">
     @import "../../assets/scss/define";
-    #MyID{
-        @extend %db;
+    #textarea{
+        @extend %dn;
     }
     .container-wrap{
         font-size: 14px;
