@@ -84,7 +84,7 @@
                         article_con: this.simplemde && this.simplemde.value()
                     },
                     error_msg = type ? '发布文章失败' : '保存草稿失败',
-                    success_msg = type ? '发布文章成功' : '发布文章失败';
+                    success_msg = type ? '发布文章成功' : '保存草稿成功';
                 setTimeout(() => {
                     Util.uploadArticle(article,(result) => {
                         if(result.status){

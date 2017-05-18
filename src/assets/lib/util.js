@@ -34,6 +34,11 @@ const Util = function (win) {
         Util.ajax( '/blog_backstage/fetchArticle', {fetch_condition}, 'GET', success_callback, fail_callback );
     };
 
+    /**发布或下架文章*/
+    Util.offOrReleaseArticle = function (data,success_callback,fail_callback) {
+        Util.ajax( '/blog_backstage/offOrReleaseArticle', data, 'GET', success_callback, fail_callback );
+    };
+
     /**修改文章*/
     Util.updateArticle = function (article,success_callback,fail_callback) {
         Util.ajax( '/blog_backstage/updateArticle', {article}, 'GET', success_callback, fail_callback );

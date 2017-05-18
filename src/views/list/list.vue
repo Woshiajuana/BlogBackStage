@@ -39,8 +39,8 @@
                         width="220">
                         <template scope="scope">
                             <el-button type="info" size="small" @click="editorArticle(scope.row)">编辑</el-button>
-                            <el-button v-if="scope.row.article_is_publish" type="warning" size="small">下架</el-button>
-                            <el-button v-else type="info" size="small">发表</el-button>
+                            <el-button @click="offOrReleaseArticle(scope.row)" v-if="scope.row.article_is_publish" type="warning" size="small">下架</el-button>
+                            <el-button @click="offOrReleaseArticle(scope.row)" v-else type="info" size="small">发表</el-button>
                             <el-button @click="deleteArticle(scope.row)" type="danger" size="small">删除</el-button>
                         </template>
                     </el-table-column>
@@ -87,6 +87,32 @@
             '$route': 'fetchArticlesList'
         },
         methods: {
+            /**下架或发布文章*/
+            offOrReleaseArticle (article) {
+                this.is_loading = true;
+                Util.offOrReleaseArticle({
+                    _id: article._id,
+                    article_is_publish: !article.article_is_publish
+                },(result) => {
+                    setTimeout( () => {
+                        this.is_loading = false;
+                        if (result.status) {
+                            this.$message({
+                                showClose: true,
+                                message: result.msg,
+                                type: 'success'
+                            });
+                            this.fetchArticlesList();
+                        } else {
+                            this.$message({
+                                showClose: true,
+                                message: result.msg,
+                                type: 'error'
+                            });
+                        }
+                    },300)
+                })
+            },
             handleIconClick () {
                 if(!this.key_word){
                     this.$message({type: 'info', message: '请输入关键字'});
