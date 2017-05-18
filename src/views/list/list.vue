@@ -122,7 +122,7 @@
             },
             handleCurrentChange (val) {
                 this.page_num = val;
-                this.fetchArticlesList();
+                Tool.jumpPage('?tab='+this.$route.query.tab+'&&page_num='+this.page_num);
             },
             /**删除文章数据*/
             deleteArticle ({_id,article_title}) {
@@ -148,6 +148,8 @@
                 this.is_loading = true;
                 var tab = route ? route.query.tab: this.$route.query.tab;
                 var key_word = route ? route.query.key_word: this.$route.query.key_word;
+                var page_num = route ? route.query.page_num: this.$route.query.page_num;
+                this.page_num = +page_num || 1;
                 this.$store.commit(types.SET_TAB_INDEX,this.judgeTab(tab));
                 Util.fetchArticlesList({
                     tab: tab,
