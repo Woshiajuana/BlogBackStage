@@ -149,13 +149,13 @@
                 var tab = route ? route.query.tab: this.$route.query.tab;
                 var key_word = route ? route.query.key_word: this.$route.query.key_word;
                 this.$store.commit(types.SET_TAB_INDEX,this.judgeTab(tab));
-                setTimeout( () => {
-                    Util.fetchArticlesList({
-                        tab: tab,
-                        page_num: this.page_num,
-                        page_size: this.page_size,
-                        key_word: key_word
-                    }, (result) => {
+                Util.fetchArticlesList({
+                    tab: tab,
+                    page_num: this.page_num,
+                    page_size: this.page_size,
+                    key_word: key_word
+                }, (result) => {
+                    setTimeout( () => {
                         if(result.status == 1) {
                             var data = result.data;
                             this.article_arr = data.article_arr;
@@ -164,8 +164,8 @@
                         }
                         else this.$message({type: 'error', message: result.msg});
                         this.is_loading = false;
-                    });
-                },300);
+                    },300);
+                });
             },
             /**编辑文档*/
             editorArticle (article) {
