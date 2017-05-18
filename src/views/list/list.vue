@@ -122,7 +122,7 @@
             },
             handleCurrentChange (val) {
                 this.page_num = val;
-                this.fetchData();
+                this.fetchArticlesList();
             },
             /**删除文章数据*/
             deleteArticle ({_id,article_title}) {
