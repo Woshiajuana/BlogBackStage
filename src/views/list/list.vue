@@ -29,18 +29,19 @@
                         width="150">
                     </el-table-column>
                     <el-table-column
-                        prop="article_time"
                         label="发表时间"
                         width="180"
                         show-overflow-tooltip>
+                        <template scope="scope">{{ scope.row.article_time | articleTime }}</template>
                     </el-table-column>
                     <el-table-column
                         label="操作"
-                        width="180">
+                        width="220">
                         <template scope="scope">
-                            <el-button type="text" size="small">编辑</el-button>
-                            <el-button type="text" size="small">下架</el-button>
-                            <el-button @click="deleteArticle(scope.row)" type="text" size="small">删除</el-button>
+                            <el-button type="info" size="small" @click="editorArticle(scope.row)">编辑</el-button>
+                            <el-button v-if="scope.row.article_is_publish" type="warning" size="small">下架</el-button>
+                            <el-button v-else type="info" size="small">发表</el-button>
+                            <el-button @click="deleteArticle(scope.row)" type="danger" size="small">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -58,7 +59,8 @@
     </div>
 </template>
 <script>
-    import Util from '../../assets/lib/util';
+    import Util from '../../assets/lib/Util';
+    import Tool from '../../assets/lib/Tool';
     import types from '../../store/mutation-types';
     export default {
         name: 'list',
@@ -74,24 +76,15 @@
             }
         },
         created () {
-            this.fetchData();
+            this.fetchArticlesList();
+        },
+        filters: {
+            articleTime (article_time) {
+                return Tool.format('yyyy-MM-dd hh:mm',new Date(article_time))
+            }
         },
         watch: {
-            '$route': 'fetchData'
-        },
-        computed: {
-            keyWordArticle_arr () {
-                var arr = [];
-                if(!this.key_word)
-                    return this.article_arr;
-                else{
-                    this.article_arr.forEach((item,index) => {
-                        if(item.article_title.indexOf(this.key_word) > -1)
-                            arr.push(item);
-                    });
-                    return arr;
-                }
-            }
+            '$route': 'fetchArticlesList'
         },
         methods: {
             handleIconClick () {
@@ -99,7 +92,7 @@
                     this.$message({type: 'info', message: '请输入关键字'});
                     return;
                 }
-                Util.jumpPage('?tab='+this.$route.query.tab+'&&key_word='+this.key_word);
+                Tool.jumpPage('?tab='+this.$route.query.tab+'&&key_word='+this.key_word);
             },
             handleCurrentChange (val) {
                 this.page_num = val;
@@ -112,9 +105,9 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    Util.listAjax.removeArticle({article_id:_id},(result) => {
+                    Util.deleteArticle(_id,(result) => {
                         if(result.status){
-                            this.fetchData();
+                            this.fetchArticlesList();
                             this.$message({type: 'success', message: result.msg});
                         }else{
                             this.$message({type: 'success', message: result.msg});
@@ -125,27 +118,32 @@
                 });
             },
             /**获取文章列表数据*/
-            fetchData (route) {
+            fetchArticlesList (route) {
                 this.is_loading = true;
                 var tab = route ? route.query.tab: this.$route.query.tab;
                 var key_word = route ? route.query.key_word: this.$route.query.key_word;
                 this.$store.commit(types.SET_TAB_INDEX,this.judgeTab(tab));
                 setTimeout( () => {
-                    Util.listAjax.achieveArticle({
+                    Util.fetchArticlesList({
                         tab: tab,
                         page_num: this.page_num,
                         page_size: this.page_size,
                         key_word: key_word
                     }, (result) => {
                         if(result.status == 1) {
-                            this.article_arr = result.data;
-                            this.page_count = result.page_count;
-                            this.article_total = result.article_total;
+                            var data = result.data;
+                            this.article_arr = data.article_arr;
+                            this.page_count = data.page_count;
+                            this.article_total = data.article_total;
                         }
                         else this.$message({type: 'error', message: result.msg});
                         this.is_loading = false;
                     });
                 },300);
+            },
+            /**编辑文档*/
+            editorArticle (article) {
+                this.$router.push('/editor/' + article._id);
             },
             /**判断列表tab键active的值index*/
             judgeTab (tab) {

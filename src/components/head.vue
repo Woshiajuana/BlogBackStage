@@ -33,7 +33,7 @@
                 this.user_name = Tool.dataToSessionStorageOperate.achieve('user').user_name;
             },
             safeExit () {
-                this.$confirm('是否删除安全退出?', '提示', {
+                this.$confirm('是否安全退出?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'

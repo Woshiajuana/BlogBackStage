@@ -53,11 +53,21 @@ const Tool = function (win) {
             localStorage.clear();
         }
     };
+
+    /**跳转页面*/
+    Tool.jumpPage = function ( jumpUrl ) {
+        if(typeof jumpUrl == 'undefined') win.location.href = win.location.origin + '/#/abnormal';
+        else if( jumpUrl.indexOf('http') == -1)
+            win.location.href = win.location.origin + '/#/' + jumpUrl;
+        else
+            win.location.href = jumpUrl;
+    };
+
     /**
      * 格式化时间
      * */
-    Tool.format = function(fmt) {
-        var time = new Date();
+    Tool.format = function(fmt,date) {
+        var time = date || new Date();
         var o = {
             "M+" : time.getMonth()+1,
             "d+" : time.getDate(),

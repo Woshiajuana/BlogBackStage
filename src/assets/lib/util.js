@@ -24,57 +24,29 @@ const Util = function (win) {
         Util.ajax( '/blog_backstage/login', user, 'POST', success_callback, fail_callback );
     };
 
-    /**验证注册时信息是否已存在*/
-    Util.checkUserRepeat = function (user_msg,success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/checkUserRepeat', {user_msg}, 'GET', success_callback, fail_callback );
+    /**上传文章*/
+    Util.uploadArticle = function (article,success_callback, fail_callback) {
+        Util.ajax( '/blog_backstage/uploadArticle', {article}, 'GET', success_callback, fail_callback );
     };
 
-    /**发送邮件*/
-    Util.sendEmail = function (user_email,success_callback,fail_callback) {
-        Util.ajax( '/thepalestink/sendEmail', {user_email:user_email}, 'GET', success_callback, fail_callback );
+    /**获取文章*/
+    Util.fetchArticle = function (fetch_condition,success_callback,fail_callback) {
+        Util.ajax( '/blog_backstage/fetchArticle', {fetch_condition}, 'GET', success_callback, fail_callback );
     };
 
-    /**用户注册*/
-    Util.register = function (new_user,success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/register', new_user, 'POST', success_callback, fail_callback );
+    /**修改文章*/
+    Util.updateArticle = function (article,success_callback,fail_callback) {
+        Util.ajax( '/blog_backstage/updateArticle', {article}, 'GET', success_callback, fail_callback );
     };
 
-    /**
-     * 请求总共可用余额
-     * */
-    Util.fetchTotalBalance = function (user_name,success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/fetchTotalBalance', {user_name: user_name}, 'GET', success_callback, fail_callback );
+    /**删除文章*/
+    Util.deleteArticle = function (_id,success_callback,fail_callback) {
+        Util.ajax( '/blog_backstage/deleteArticle',{_id}, 'GET', success_callback, fail_callback );
     };
 
-    /**
-     * 添加账单
-     * */
-    Util.addBill = function (bill, success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/addBill', bill, 'GET', success_callback, fail_callback );
-    };
-
-    /**
-     * 请求账单
-     * */
-    Util.fetchBill = function (obj, success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/fetchBill',obj,'GET', success_callback,fail_callback);
-    };
-
-    /**
-     * 删除账单
-     * */
-    Util.removeBill = function (user_name, bill, success_callback, fail_callback) {
-        Util.ajax( '/thepalestink/removeBill',{user_name:user_name,bill: bill},'GET', success_callback,fail_callback);
-    };
-
-    /**修改密码*/
-    Util.modifyPassword = function (obj,success_callback,fail_callback) {
-        Util.ajax( '/thepalestink/modifyPassword',obj,'GET', success_callback,fail_callback);
-    };
-
-    /**找回密码*/
-    Util.retrievePassword = function (obj,success_callback,fail_callback) {
-        Util.ajax( '/thepalestink/retrievePassword',obj,'GET', success_callback,fail_callback);
+    /**获取文章列表*/
+    Util.fetchArticlesList = function (fetch_condition,success_callback,fail_callback) {
+        Util.ajax( '/blog_backstage/fetchArticlesList', fetch_condition, 'GET', success_callback, fail_callback );
     };
 
     /**

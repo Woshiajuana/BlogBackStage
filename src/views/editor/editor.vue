@@ -3,7 +3,7 @@
     <div class="container-wrap">
         <div class="container-content editor-wrap"
              v-loading="is_loading"
-             element-loading-text="拼命上传中~~~">
+             :element-loading-text="loading_text">
             <p class="prompt-text"><span class="prompt-icon">*</span>文章类型和文章标题：</p>
             <el-input class="input-box" placeholder="请输入标题" v-model="article_title">
                 <template slot="prepend">
@@ -21,8 +21,9 @@
                 <textarea id="textarea"></textarea>
             </div>
             <div class="input-btn">
-                <el-button type="default" @click="submitArticle()">保存草稿</el-button>
-                <el-button type="primary" @click="submitArticle()">发布文章</el-button>
+                <el-button v-if="!article" type="default" @click="uploadArticle(0)">保存草稿</el-button>
+                <el-button v-if="!article" type="primary" @click="uploadArticle(1)">发布文章</el-button>
+                <el-button v-if="article" type="primary" @click="updateArticle()">完成修改</el-button>
             </div>
         </div>
     </div>
@@ -30,7 +31,8 @@
 </template>
 <script>
     import types from '../../store/mutation-types'
-    import Util from '../../assets/lib/util'
+    import Util from '../../assets/lib/Util'
+    import Tool from '../../assets/lib/Tool'
     import SimpleMDE from 'simplemde'
     export default {
         data() {
@@ -57,14 +59,16 @@
                     value: 'js',
                     label: 'js'
                 }],
-                name: 'base-example',
-                content: '',
-                editorOption: {}
+                simplemde: '',
+                article: '',
+                article_con: '',
+                loading_text: '拼命上传中~~~'
             }
         },
         methods: {
-            submitArticle () {
-                if(!this.article_type || !this.article_title || !this.content) {
+            /**上传文章*/
+            uploadArticle (type) {
+                if(!this.article_type || !this.article_title || !this.simplemde.value()) {
                     this.$message({
                         showClose: true,
                         message: '请把信息填写完整~~~',
@@ -73,24 +77,53 @@
                     return;
                 }
                 this.is_loading = true;
-                let article = {
-                    article_title: this.article_title,
-                    article_type: this.article_type,
-                    article_time: Util.dateFormat('yyyy-MM-dd hh-mm'),
-                    article_content: this.content
-                };
+                var article = {
+                        article_title: this.article_title,
+                        article_type: this.article_type,
+                        article_is_publish: type ? true : false,
+                        article_con: this.simplemde && this.simplemde.value()
+                    },
+                    error_msg = type ? '发布文章失败' : '保存草稿失败',
+                    success_msg = type ? '发布文章成功' : '发布文章失败';
                 setTimeout(() => {
-                    Util.listAjax.insertArticle({article:article},(result) => {
+                    Util.uploadArticle(article,(result) => {
                         if(result.status){
-                            this.is_loading = false;
-                            this.article_type = '';
-                            this.article_title = '';
-                            this.content = '';
+                            this.reset();
                             this.$message({
                                 showClose: true,
-                                message: '提交成功~~~',
+                                message: success_msg,
                                 type: 'success'
                             });
+                        } else {
+                            this.$message({
+                                showClose: true,
+                                message: error_msg,
+                                type: 'error'
+                            });
+                        }
+                    });
+                },300);
+            },
+            /**重置*/
+            reset () {
+                this.is_loading = false;
+                this.article_type = '';
+                this.article_title = '';
+                this.simplemde.value("");
+            },
+            /**获取数据*/
+            fetchArticle (_id) {
+                this.is_loading = true;
+                this.loading_text = '获取文章数据';
+                Util.fetchArticle({_id}, (result) => {
+                    setTimeout(() => {
+                        this.is_loading = false;
+                        this.loading_text = '拼命上传中~~~';
+                        if (result.status) {
+                            this.article = result.data.articles[0];
+                            this.article_title = this.article.article_title;
+                            this.article_type = this.article.article_type;
+                            this.article_con = this.article.article_con;
                         } else {
                             this.$message({
                                 showClose: true,
@@ -98,20 +131,63 @@
                                 type: 'error'
                             });
                         }
+                    },300)
+                });
+            },
+            /**修改文章*/
+            updateArticle () {
+                if(!this.article_type || !this.article_title || !this.simplemde.value()) {
+                    this.$message({
+                        showClose: true,
+                        message: '请把信息填写完整~~~',
+                        type: 'error'
                     });
-                },300);
-
+                    return;
+                }
+                this.is_loading = true;
+                this.article.article_type = this.article_type;
+                this.article.article_title = this.article_title;
+                this.article.article_con = this.simplemde.value();
+                Util.updateArticle(this.article, (result) => {
+                    setTimeout(() => {
+                        this.is_loading = false;
+                        if (result.status) {
+                            this.$message({
+                                showClose: true,
+                                message: result.msg,
+                                type: 'success'
+                            });
+                            window.history.go(-1);
+                        } else {
+                            this.$message({
+                                showClose: true,
+                                message: result.msg,
+                                type: 'error'
+                            });
+                        }
+                    },300)
+                });
+            }
+        },
+        watch: {
+            simplemde: function (val) {
+                this.simplemde.value(this.article_con);
             }
         },
         created () {
+            var _id = this.$route.params._id;
+            if (_id) {
+                this.fetchArticle( _id );
+            } else {
+                this.$store.commit(types.SET_TAB_INDEX,'2');
+            }
             this.$nextTick( () => {
                 setTimeout( () => {
-                    var simplemde = new SimpleMDE({
+                    this.simplemde = new SimpleMDE({
                         element: document.getElementById("textarea")
                     });
                 },500)
             });
-            this.$store.commit(types.SET_TAB_INDEX,'2');
         }
     }
 </script>

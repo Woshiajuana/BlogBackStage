@@ -26,6 +26,12 @@ let router = new Router({
                     path: 'editor',
                     name: 'editor',
                     component: Editor
+                },
+                /**文章编辑页*/
+                {
+                    path: 'editor/:_id',
+                    name: 'editor',
+                    component: Editor
                 }
             ]
         },
@@ -46,19 +52,14 @@ let router = new Router({
 router.beforeEach( (to, from, next) => {
     var user = Tool.dataToSessionStorageOperate.achieve('user');
     var token = Tool.dataToSessionStorageOperate.achieve('token');
-    console.log(1)
     if((!token || !user) && to.path != '/login'){
-        console.log(2)
         next('/login');
     }
     else if ( token && user && to.path == '/login'){
-        console.log(3)
         next('/?tab=all');
     }else if ( token && user && to.path == '/' && !to.query.tab) {
-        console.log(4)
         next('/?tab=all');
     }else {
-        console.log(5)
         next();
     }
 });
