@@ -26,7 +26,7 @@ const Util = function (win) {
 
     /**上传文章*/
     Util.uploadArticle = function (article,success_callback, fail_callback) {
-        Util.ajax( '/blog_backstage/uploadArticle', {article}, 'GET', success_callback, fail_callback );
+        Util.ajax( '/blog_backstage/uploadArticle', {article}, 'POST', success_callback, fail_callback );
     };
 
     /**获取文章*/
@@ -41,7 +41,7 @@ const Util = function (win) {
 
     /**修改文章*/
     Util.updateArticle = function (article,success_callback,fail_callback) {
-        Util.ajax( '/blog_backstage/updateArticle', {article}, 'GET', success_callback, fail_callback );
+        Util.ajax( '/blog_backstage/updateArticle', {article}, 'POST', success_callback, fail_callback );
     };
 
     /**删除文章*/
