@@ -52,19 +52,13 @@ let router = new Router({
 router.beforeEach( (to, from, next) => {
     var user = Tool.dataToSessionStorageOperate.achieve('user');
     var token = Tool.dataToSessionStorageOperate.achieve('token');
-    console.log(1)
-    if((!token || !user) && to.path != '/login'){
-        console.log(2)
+    if ((!token || !user) && to.path != '/login'){
         next('/login');
-    }
-    else if ( token && user && to.path == '/login'){
-        console.log(3)
+    } else if ( token && user && to.path == '/login'){
         next('/?tab=all');
-    }else if ( token && user && to.path == '/' && !to.query.tab) {
-        console.log(4)
+    } else if ( token && user && to.path == '/' && !to.query.tab) {
         next('/?tab=all');
-    }else {
-        console.log(5)
+    } else {
         next();
     }
 });
